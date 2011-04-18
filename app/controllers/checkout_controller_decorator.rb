@@ -183,11 +183,14 @@ CheckoutController.class_eval do
       @order.update_attributes(object_params)
       @order.process_coupon_code
     end
-    load_order
-    payment_method = PaymentMethod.find(params[:order][:payments_attributes].first[:payment_method_id])
 
-    if payment_method.kind_of?(BillingIntegration::PaypalExpress) || payment_method.kind_of?(BillingIntegration::PaypalExpressUk)
-      redirect_to paypal_payment_order_checkout_url(@order, :payment_method_id => payment_method)
+    if params[:order][:payments_attributes]
+      load_order
+      payment_method = PaymentMethod.find(params[:order][:payments_attributes].first[:payment_method_id])
+
+      if payment_method.kind_of?(BillingIntegration::PaypalExpress) || payment_method.kind_of?(BillingIntegration::PaypalExpressUk)
+        redirect_to paypal_payment_order_checkout_url(@order, :payment_method_id => payment_method)
+      end
     end
   end
 
